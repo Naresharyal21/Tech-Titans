@@ -1,4 +1,10 @@
 # Getting Started with Create React App
+install packages
+react  version 18 app
+npm install @mui/icons-material
+
+materialui   :npm i @material-ui/core
+2:npm install @mui/material @emotion/react @emotion/styled
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
