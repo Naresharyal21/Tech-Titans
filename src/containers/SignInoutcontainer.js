@@ -5,12 +5,16 @@ import Signup from "../components/Signup";
 
 export default function SignInOutContainer() {
   const [value, setValue] = React.useState(0);
-  const paperstyle = {
-    padding: "30px 20px",
-    width: "300px",
-
-    borderRadius: 50,
-  };
+  // const paperstyle = {
+  //   padding: 20,
+  //   height: "auto",
+  //   width: 300,
+    
+  //   backgroundColor: "rgba(255, 255, 255, 0.2)",
+  //   boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.2)",
+  //   backdropFilter: "blur(10px)",
+  
+  // };
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
