@@ -22,13 +22,18 @@ export default function Login() {
     width: 300,
     margin: "20px auto",
     borderRadius: 50,
+    backgroundColor: "transparent", 
+    boxShadow: "0 9px 9px rgb(251, 255, 0)",
   };
   const avtarStyle = { backgroundColor: "#4CAF50" };
-  const textFieldStyle = { margin: "9px" };
+  const textFieldStyle = { margin: "9px" ,
+    backgroundColor:"transparent"
+  };
 
   const linkStyle = { 
     marginLeft: "auto", 
-    fontSize: "0.8em" 
+    fontSize: "0.8em" ,
+    color:"black",
   };
 
   const initialValues = {

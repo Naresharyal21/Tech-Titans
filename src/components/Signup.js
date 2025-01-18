@@ -19,6 +19,8 @@ export default function Signup() {
     height: "auto",
     margin: "20px auto",
     borderRadius: 50,
+    backgroundColor: "transparent", 
+    boxShadow: "0 9px 9px rgb(251, 255, 0)",
   };
   const avatarStyle = { backgroundColor: "#4CAF50" };
   const textFieldStyle = { margin: "10px 0" };
@@ -35,6 +37,7 @@ export default function Signup() {
     email: Yup.string()
       .email("Invalid email format")
       .required("Email is required"),
+    
     accessCode: Yup.string()
       .required("Access Code is required")
       .oneOf(["TEACHER2025"], "Invalid access code"),
