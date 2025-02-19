@@ -1,17 +1,13 @@
 import React, { useState } from "react";
-import {
-  Avatar,
-  Box,
-  Paper,
-  TextField,
-  Button,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Paper, TextField, Button, Typography } from "@mui/material";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Collectdata({ mystyle }) {
+  const navigate = useNavigate();
   const paperStyle = {
     padding: "30px 20px",
     width: "300px",
@@ -31,7 +27,6 @@ export default function Collectdata({ mystyle }) {
   const initialValues = {
     fullname: "",
     rollno: "",
-    department: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -46,22 +41,49 @@ export default function Collectdata({ mystyle }) {
         (value) => value >= 211401 && value <= 211450
       )
       .required("Roll number is required"),
-    department: Yup.string().required("Department is required")
-    .oneOf(["BEIT","beit"], "Must be BEIT Only"),
+    // department: Yup.string().required("Department is required")
+    // .oneOf(["BEIT","beit"], "Must be BEIT Only"),
   });
 
   const [buttonClicked, setButtonClicked] = useState("");
 
   const handleFormSubmission = async (values, { resetForm }) => {
     if (buttonClicked === "takeImage") {
-      console.log("Take Image Button Clicked");
-      alert("Image captured and saved to backend!");
-      // Add API logic for capturing and saving image
-    } else if (buttonClicked === "saveData") {
-      console.log("Save Data Button Clicked", values);
-      alert("Text fields data saved to database!");
-      // Add API logic for saving text field data
-      resetForm(); // Reset the form after submission
+      try {
+        // Make an API call to the backend to trigger the FastAPI Python script
+        const response = await axios.post("http://localhost:5000/api/collect-data", {
+          name: values.fullname,
+          roll_number: values.rollno,
+        });
+
+        if (response.status === 200) {
+          resetForm(); // Reset the form after submission
+          navigate("/home"); // Navigate to the home page
+        } else {
+          alert("Error while saving data.");
+        }
+      } catch (error) {
+        console.error("Error during image capture:", error);
+        alert("Error while capturing image.");
+      }
+    // } else if (buttonClicked === "saveData") {
+    //   try {
+    //     // Make an API call to save the student data to the database
+    //     const response = await axios.post("http://localhost:5000/save-Data", {
+    //       name: values.fullname,
+    //       roll_number: values.rollno,
+    //     });
+
+    //     if (response.status === 200) {
+    //       alert("Student data saved successfully!");
+    //       resetForm(); // Reset the form after submission
+    //     } else {
+    //       alert("Error while saving data.");
+    //     }
+    //   } catch (error) {
+    //     console.error("Error during data submission:", error);
+    //     alert("Error while saving data.");
+    //   }
     }
   };
 
@@ -117,11 +139,11 @@ export default function Collectdata({ mystyle }) {
                 fullWidth
                 disabled={isSubmitting}
                 sx={{ marginTop: "15px" }}
-                onClick={() => setButtonClicked("takeImage")} // Identify which button was clicked
+                onClick={() => setButtonClicked("takeImage")}
               >
                 TAKE FACE IMAGE
               </Button>
-              <Button
+              {/* <Button
                 type="submit"
                 name="saveData"
                 variant="contained"
@@ -129,10 +151,10 @@ export default function Collectdata({ mystyle }) {
                 fullWidth
                 disabled={isSubmitting}
                 sx={{ marginTop: "15px" }}
-                onClick={() => setButtonClicked("saveData")} // Identify which button was clicked
+                onClick={() => setButtonClicked("saveData")}
               >
                 SUBMIT STUDENT DATA
-              </Button>
+              </Button> */}
             </Form>
           )}
         </Formik>

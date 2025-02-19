@@ -1,7 +1,8 @@
-import { display, margin, width } from "@mui/system";
+// import { display, margin, width } from "@mui/system";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Collectdata from "./Collectdata"; 
+import axios from 'axios';
 // import "./Home.css";
 
 
@@ -40,12 +41,14 @@ export default function Home() {
     });
     setBtnText(isDarkMode ? "Dark Mode" : "Light Mode");
   };
-
-  // Handle logout
+// handle logout
   const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear authentication token
     console.log("Logged out successfully!");
     navigate("/"); // Navigate to the login page
   };
+  
+
   //handlecollect data
 
   const handleCollectData = () => {
@@ -57,9 +60,17 @@ export default function Home() {
     setIsFormVisible(false); // Hide the form
   };
 
-  const handleTrainData = () => {
-    alert("Train Data button clicked!");
-    // Add your functionality here
+  const handleTrainData = async () => {
+    try {
+      // Make a POST request to the backend to trigger model training
+      const response = await axios.post('http://localhost:5000/api/train');  // Ensure the backend is running at this endpoint
+      alert('Model training started');
+      console.log(response.data.message);
+      alert('Model training initiated successfully!');
+    } catch (error) {
+      console.error('Error during model training:', error);
+      alert('Failed to initiate model training!');
+    }
   };
 
   const handleTakeAttendance = () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { Link as RouterLink } from "react-router-dom";
@@ -19,28 +19,14 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
-  const paperStyle = {
-    padding: 20,
-    height: "auto",
-    width: 300,
-    margin: "20px auto",
-    borderRadius: 50,
-    backgroundColor: "transparent", 
-    boxShadow: "0 9px 9px rgb(251, 255, 0)",
-  };
-  const avtarStyle = { backgroundColor: "#4CAF50" };
-  const textFieldStyle = { margin: "9px" ,
-    backgroundColor:"transparent"
-  };
 
-  const linkStyle = { 
-    marginLeft: "auto", 
-    fontSize: "0.8em" ,
-    color:"black",
-  };
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/home"); // Redirect if already logged in
+    }
+  }, [navigate]);
 
   const initialValues = {
-    fullname: "",
     email: "",
     password: "",
   };
@@ -56,27 +42,32 @@ export default function Login() {
 
   const onSubmit = (values, { resetForm }) => {
     axios
-      .post("http://localhost:5000/api/login", values) // Replace with your backend URL
+      .post("http://localhost:5000/api/login", values) 
       .then((response) => {
         console.log("Login Success:", response.data);
-        // Store the JWT token in localStorage/sessionStorage if needed
-        localStorage.setItem("token", response.data.token);
-        resetForm(); // Reset form after successful login
-        navigate("/home"); // Navigate to the home page
+        localStorage.setItem("token", response.data.token); // Store JWT token
+        resetForm(); 
+        navigate("/home"); // Navigate to home page
       })
       .catch((error) => {
         console.error("Login Error:", error.response?.data || error.message);
-        alert(
-          error.response?.data?.message || "An error occurred. Please try again."
-        );
+        alert(error.response?.data?.message || "An error occurred. Please try again.");
       });
   };
 
   return (
     <Box>
-      <Paper elevation={20} style={paperStyle}>
+      <Paper elevation={20} style={{
+        padding: 20,
+        height: "auto",
+        width: 300,
+        margin: "20px auto",
+        borderRadius: 50,
+        backgroundColor: "transparent",
+        boxShadow: "0 9px 9px rgb(251, 255, 0)",
+      }}>
         <Box align="center">
-          <Avatar style={avtarStyle}>
+          <Avatar style={{ backgroundColor: "#4CAF50" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography variant="h5">Sign In</Typography>
@@ -87,65 +78,21 @@ export default function Login() {
           >
             {(props) => (
               <Form>
-                <Field
-                  as={TextField}
-                  style={textFieldStyle}
-                  id="loginemail"
-                  name="email"
-                  label="Email"
-                  placeholder="Enter Email"
-                  type="email"
-                  fullWidth
-                />
-                <ErrorMessage
-                  name="email"
-                  component="div"
-                  style={{ color: "red", fontSize: "0.8em" }}
-                />
+                <Field as={TextField} id="loginemail" name="email" label="Email" placeholder="Enter Email" type="email" fullWidth style={{ margin: "9px", backgroundColor: "transparent" }} />
+                <ErrorMessage name="email" component="div" style={{ color: "red", fontSize: "0.8em" }} />
 
-                <Field
-                  as={TextField}
-                  style={textFieldStyle}
-                  id="outlined-password-input"
-                  name="password"
-                  label="Password"
-                  type="password"
-                  placeholder="Enter Password"
-                  autoComplete="current-password"
-                  fullWidth
-                />
-                <ErrorMessage
-                  name="password"
-                  component="div"
-                  style={{ color: "red", fontSize: "0.8em" }}
-                />
+                <Field as={TextField} id="outlined-password-input" name="password" label="Password" type="password" placeholder="Enter Password" autoComplete="current-password" fullWidth style={{ margin: "9px", backgroundColor: "transparent" }} />
+                <ErrorMessage name="password" component="div" style={{ color: "red", fontSize: "0.8em" }} />
 
-                <Box
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="space-between"
-                  mt={2}
-                >
-                  <FormControlLabel
-                    control={<Checkbox name="rememberMe" color="primary" />}
-                    label="Remember me"
-                  />
-                  <Link
-                    component={RouterLink}
-                    to="/forgot-password"
-                    style={linkStyle}
-                  >
+                <Box display="flex" alignItems="center" justifyContent="space-between" mt={2}>
+                  <FormControlLabel control={<Checkbox name="rememberMe" color="primary" />} label="Remember me" />
+                  <Link component={RouterLink} to="/forgot-password" style={{ marginLeft: "auto", fontSize: "0.8em", color: "black" }}>
                     Forgot Password?
                   </Link>
+
                 </Box>
 
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="success"
-                  fullWidth
-                  style={{ marginTop: "20px" }}
-                >
+                <Button type="submit" variant="contained" color="success" fullWidth style={{ marginTop: "20px" }}>
                   Login
                 </Button>
               </Form>
