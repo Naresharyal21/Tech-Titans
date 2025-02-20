@@ -3,13 +3,20 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Collectdata from "./Collectdata"; 
 import axios from 'axios';
+import ViewAttendance from "./Viewattendance";
+import Exportresult from "./Exportresult";
 // import "./Home.css";
+
+
 
 
 export default function Home() {
   const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate(); // Hook for navigation
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isAttendanceVisible, setIsAttendanceVisible] = useState(false);
+  const [isExportVisible, setIsExportVisible] = useState(false);
+
   // Digital clock
   useEffect(() => {
     const timer = setInterval(() => {
@@ -64,7 +71,7 @@ export default function Home() {
     try {
       // Make a POST request to the backend to trigger model training
       const response = await axios.post('http://localhost:5000/api/train');  // Ensure the backend is running at this endpoint
-      alert('Model training started');
+
       console.log(response.data.message);
       alert('Model training initiated successfully!');
     } catch (error) {
@@ -73,20 +80,41 @@ export default function Home() {
     }
   };
 
-  const handleTakeAttendance = () => {
-    alert("Take Attendance button clicked!");
-    // Add your functionality here
+  const handleTakeAttendance = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/recognize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        alert(`Attendance recorded successfully for ${data.name}`);
+      } else {
+        alert(`Error: ${data.detail}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Failed to take attendance. Please try again.");
+    }
+  };
+  
+
+ const handleViewAttendance = () => {
+    console.log("View Attendance button clicked!");
+    setIsAttendanceVisible(true);
   };
 
-  const handleViewAttendance = () => {
-    alert("View Attendance button clicked!");
-    // Add your functionality here
+  const closeAttendanceModal = () => {
+    setIsAttendanceVisible(false);
   };
 
-  const handleExportResult = () => {
-    alert("Export Result button clicked!");
-    // Add your functionality here
-  };
+
+  const handleExportResult = () => setIsExportVisible(true);
+  const closeExportModal = () => setIsExportVisible(false);
 
   // CSS styles
   const mainBodyStyle = {
@@ -368,6 +396,29 @@ export default function Home() {
              ${responsiveStyles} 
         `}
         </style>
+        {isAttendanceVisible && (
+  <div
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      backgroundColor: "rgba(0, 0, 0, 0.5)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1000,
+    }}
+  >
+    <ViewAttendance mystyle={mystyle} onClose={closeAttendanceModal} />
+  </div>
+)}
+  {isExportVisible && (
+          <div style={{ position: "fixed", top: 0, left: 0, width: "100%", height: "100%", backgroundColor: "rgba(0, 0, 0, 0.5)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 1000 }}>
+            <Exportresult mystyle={mystyle} onClose={closeExportModal} />
+          </div>
+        )}
       </div>
     </>
   );

@@ -6,6 +6,8 @@ import Signup from './components/Signup';
 import Home from './components/Home';
 import Collectdata from './components/Collectdata';
 import ForgotPassword from "./components/ForgotPassword";
+import ViewAttendance from './components/Viewattendance';
+import Exportresult from './components/Exportresult';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -27,6 +29,8 @@ function App() {
         {/* Protected Routes */}
         <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
         <Route path="/cd" element={<ProtectedRoute><Collectdata /></ProtectedRoute>} />
+        <Route path="/va" element={<ProtectedRoute><ViewAttendance/></ProtectedRoute>} />
+        <Route path="/er" element={<ProtectedRoute><Exportresult/></ProtectedRoute>} />
         
 
         {/* 404 Page */}
