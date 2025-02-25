@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import {
@@ -66,6 +65,9 @@ export default function ViewAttendance({ mystyle, onClose }) {
     fetchAttendanceRecords();
   }, [fetchAttendanceRecords]);
 
+  // Calculate total number of present students
+  const presentCount = attendanceRecords.filter(record => record.status === "Present").length;
+
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
       <Paper elevation={19} style={paperStyle}>
@@ -79,9 +81,12 @@ export default function ViewAttendance({ mystyle, onClose }) {
           <Typography variant="h5" sx={{ color: "white" }}>
             Attendance Details
           </Typography>
+          <Typography variant="h6" sx={{ color: "#4CAF50", marginTop: "10px" }}>
+            Total Attendance: {presentCount} Present
+          </Typography>
         </Box>
 
-{loading ? (
+        {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
             <CircularProgress color="primary" />
           </Box>
@@ -90,7 +95,7 @@ export default function ViewAttendance({ mystyle, onClose }) {
         ) : attendanceRecords.length === 0 ? (
           <Typography sx={{ color: "white", mt: 2 }}>No attendance records found.</Typography>
         ) : (
-            <TableContainer component={Paper} sx={{ mt: 2, backgroundColor: "#1a1a1a" }}>
+          <TableContainer component={Paper} sx={{ mt: 2, backgroundColor: "#1a1a1a" }}>
             <Table>
               <TableHead>
                 <TableRow>
@@ -98,7 +103,6 @@ export default function ViewAttendance({ mystyle, onClose }) {
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Roll No</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Name</TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Date</TableCell>
-                  
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>Status</TableCell>
                 </TableRow>
               </TableHead>
@@ -106,17 +110,15 @@ export default function ViewAttendance({ mystyle, onClose }) {
                 {attendanceRecords.map((record, index) => (
                   <TableRow key={index}>
                     <TableCell sx={{ color: "white" }}>{index + 1}</TableCell>
-                    <TableCell sx={{ color: "white" }}>{record.roll_number}</TableCell> {/* Roll No */}
+                    <TableCell sx={{ color: "white" }}>{record.roll_number}</TableCell>
                     <TableCell sx={{ color: "white" }}>{record.name}</TableCell>
                     <TableCell sx={{ color: "white" }}>{record.date}</TableCell>
-                    
-                    <TableCell sx={{ color: "white" }}>{record.status}</TableCell> {/* Status */}
+                    <TableCell sx={{ color: "white" }}>{record.status}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-          
         )}
 
         <Button
@@ -129,6 +131,6 @@ export default function ViewAttendance({ mystyle, onClose }) {
           REFRESH
         </Button>
       </Paper>
-    </Box>
-  );
+    </Box>
+  );
 }

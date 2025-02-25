@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { Link as RouterLink } from "react-router-dom";
@@ -12,6 +12,7 @@ import {
   Button,
   Typography,
   Link,
+  CircularProgress
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import * as Yup from "yup";
@@ -19,6 +20,7 @@ import axios from "axios";
 
 export default function Login() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -40,19 +42,22 @@ export default function Login() {
       .required("Password is required"),
   });
 
-  const onSubmit = (values, { resetForm }) => {
-    axios
-      .post("http://localhost:5000/api/login", values) 
-      .then((response) => {
-        console.log("Login Success:", response.data);
-        localStorage.setItem("token", response.data.token); // Store JWT token
-        resetForm(); 
-        navigate("/home"); // Navigate to home page
-      })
-      .catch((error) => {
-        console.error("Login Error:", error.response?.data || error.message);
-        alert(error.response?.data?.message || "An error occurred. Please try again.");
-      });
+  const onSubmit = async (values, { resetForm }) => {
+    setLoading(true);
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", values);
+      
+      console.log("Login Success:", response.data);
+      localStorage.setItem("token", response.data.token);
+      
+      resetForm();
+      navigate("/home"); // Navigate to home page
+    } catch (error) {
+      console.error("Login Error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -76,7 +81,7 @@ export default function Login() {
             validationSchema={validationSchema}
             onSubmit={onSubmit}
           >
-            {(props) => (
+            {({ isSubmitting }) => (
               <Form>
                 <Field as={TextField} id="loginemail" name="email" label="Email" placeholder="Enter Email" type="email" fullWidth style={{ margin: "9px", backgroundColor: "transparent" }} />
                 <ErrorMessage name="email" component="div" style={{ color: "red", fontSize: "0.8em" }} />
@@ -89,11 +94,10 @@ export default function Login() {
                   <Link component={RouterLink} to="/forgot-password" style={{ marginLeft: "auto", fontSize: "0.8em", color: "black" }}>
                     Forgot Password?
                   </Link>
-
                 </Box>
 
-                <Button type="submit" variant="contained" color="success" fullWidth style={{ marginTop: "20px" }}>
-                  Login
+                <Button type="submit" variant="contained" color="success" fullWidth style={{ marginTop: "20px" }} disabled={isSubmitting || loading}>
+                  {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
                 </Button>
               </Form>
             )}

@@ -82,26 +82,31 @@ export default function Home() {
 
   const handleTakeAttendance = async () => {
     try {
-      const response = await fetch("http://localhost:5000/api/recognize", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-  
-      const data = await response.json();
-  
-      if (response.ok) {
-        alert(`Attendance recorded successfully for ${data.name}`);
-      } else {
-        alert(`Error: ${data.detail}`);
-      }
+        const response = await fetch("http://localhost:5000/api/recognize", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert(`Attendance recorded for ${data.recognizedPerson}`);
+
+            // 🔹 Close the camera after recognition
+            let stream = document.querySelector('video')?.srcObject;
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop()); // Stop camera
+            }
+        } else {
+            alert(`Error: ${data.message}`);
+        }
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to take attendance. Please try again.");
+        console.error("Error:", error);
+        alert("Failed to take attendance.");
     }
-  };
-  
+};
+
+
 
  const handleViewAttendance = () => {
     console.log("View Attendance button clicked!");
@@ -126,7 +131,7 @@ export default function Home() {
     alignItems: "center",
     background: "linear-gradient(90deg, #5f2c82, #49a09d)",
     backgroundSize: "200% 200%", // Reduce size for better visibility
-    animation: "gradientAnimation 9s ease infinite", // Slow down the animation
+    animation: "gradientAnimation 15s ease infinite", // Slow down the animation
     zIndex: 0, // Background layer
     ...mystyle,
   };
@@ -259,7 +264,7 @@ export default function Home() {
           {/* Navbar */}
           <nav className="navbar" style={navbarStyle}>
             <a className="navbar-brand" href="#" style={navbarItemStyle}>
-              WELCOME TO FACE RECOGNITION ATTENDANCE SYSTEM
+            <marquee>WELCOME TO FACE RECOGNITION ATTENDANCE SYSTEM</marquee>
             </a>
             <div style={clockStyle}>
               {formatDate(currentTime)}, {formatTime(currentTime)}

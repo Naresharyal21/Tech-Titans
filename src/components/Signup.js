@@ -1,5 +1,6 @@
+
 import React from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import {
   Avatar,
   Box,
@@ -13,8 +14,8 @@ import { Formik, Field, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import axios from "axios"; // Import Axios
 
-export default function Signup() {
-  const navigate = useNavigate();
+export default function Signup({setValue}) {
+  // const navigate = useNavigate();
   const paperStyle = {
     padding: "30px 20px",
     width: "300px",
@@ -27,11 +28,11 @@ export default function Signup() {
   const avatarStyle = { backgroundColor: "#4CAF50" };
   const textFieldStyle = { margin: "10px 0" };
   const initialValues = {
-    fullname: " ",
-    email: " ",
-    password: " ",
-    confirmPassword: " ",
-    accessCode: " ",
+    fullname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    accessCode: "",
   };
 
   const validationSchema = Yup.object().shape({
@@ -60,7 +61,7 @@ export default function Signup() {
       });
       console.log("Response:", response.data);
       resetForm();
-      navigate("/login"); // Navigate to the home page
+      setValue(0); // Navigate to the home page
     } catch (error) {
       console.error(
         "Error during signup:",

@@ -60,7 +60,7 @@ export default function Exportresult({ mystyle, onClose }) {
         index + 1,
         row.roll_number || "N/A", // Ensure roll number is included
         row.name || "N/A",
-        new Date(row.date).toLocaleDateString(), // Ensure readable date
+        row.date || "N/A", // Ensure readable date
         row.status || "N/A",
       ]);
 
